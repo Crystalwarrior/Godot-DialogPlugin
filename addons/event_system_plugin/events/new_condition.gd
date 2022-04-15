@@ -9,6 +9,20 @@ var events_else:String setget _set_else_timeline
 var _events_if:Resource setget set_if_timeline, get_if_timeline
 var _events_else:Resource setget set_else_timeline, get_else_timeline
 
+const _Utils = preload("res://addons/event_system_plugin/core/utils.gd")
+func _execute() -> void:
+    var variables:Dictionary = _Utils.get_property_values_from(get_event_node())
+    
+    var evaluated_condition = _Utils.evaluate(condition, get_event_node(), variables)
+    
+    if evaluated_condition and (str(evaluated_condition) != condition):
+        next_event = get_if_timeline().get("event/0")
+    else:
+        next_event = get_else_timeline().get("event/0")
+    
+    finish()
+
+
 func set_if_timeline(timeline:Resource) -> void:
 	if _events_if and _events_if.is_connected("changed", self, "set_if_timeline"):
 		_events_if.disconnect("changed", self, "set_if_timeline")
